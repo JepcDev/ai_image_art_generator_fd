@@ -53,16 +53,28 @@ class _ImageGeneratorScreenState extends State<ImageGeneratorScreen> {
         backgroundColor: Colors.lightGreen[300],
         title: Text("AI image generator", style: TextStyle(color: Colors.white),),centerTitle: true,
       ),
-      body: Column(children: [
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
         genImg != null? Image.file(genImg):
         Icon(Icons.ac_unit,size: 250,),
-        Row(
-          children: [
-            Expanded(child: TextField(controller: controller,)),
-            InkWell(child: Icon(Icons.send), onTap: (){
-              generateImage(controller.text);
-            },)
-          ],
+
+        Card(
+          shape: RoundedRectangleBorder(side: BorderSide(color: Colors.black), borderRadius: BorderRadius.circular(8)),
+          child: Padding(
+            padding: const EdgeInsets.only(left:8.0, right: 8.0),
+            child: Row(
+              children: [
+                Expanded(
+                      child: TextField(
+                    controller: controller, decoration: InputDecoration(border: InputBorder.none, hintText: "Type here..."),
+                  )),
+                InkWell(child: Icon(Icons.send), onTap: (){
+                  generateImage(controller.text);
+                },)
+              ],
+            ),
+          ),
         )
       ],),
     );
