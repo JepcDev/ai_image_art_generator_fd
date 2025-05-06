@@ -16,9 +16,13 @@ class _ImageGeneratorScreenState extends State<ImageGeneratorScreen> {
   TextEditingController controller = TextEditingController();
 
   var genImg;
+  bool loading = false;
 
 // NOTE -> generateImage
   generateImage(var prompt) async {
+    setState(() {
+      loading = true;
+    });
     controller.text = "";
     var request = http.MultipartRequest(
         'POST', Uri.parse("https://api.vyro.ai/v2/image/generations"));
@@ -43,8 +47,12 @@ class _ImageGeneratorScreenState extends State<ImageGeneratorScreen> {
 
       setState(() {
         genImg;
+        loading = false;
       });
     } else {
+      setState(() {
+        loading = false;
+      });
       print(response.statusCode);
     }
   }
@@ -72,12 +80,20 @@ class _ImageGeneratorScreenState extends State<ImageGeneratorScreen> {
                   shape: RoundedRectangleBorder(
                       side: BorderSide(color: Colors.black),
                       borderRadius: BorderRadius.circular(8)),
-                  child: genImg != null
-                      ? Image.file(genImg)
-                      : Icon(
-                          Icons.ac_unit,
-                          size: 250,
-                        ),
+                  child: loading
+                      ? SizedBox(
+                          width: 60,
+                          height: 60,
+                          child: Center(
+                              child: CircularProgressIndicator(
+                            color: Colors.teal,
+                          )))
+                      : genImg != null
+                          ? Image.file(genImg)
+                          : Icon(
+                              Icons.ac_unit,
+                              size: 250,
+                            ),
                 ),
               ),
             ),
