@@ -1,4 +1,3 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
@@ -20,28 +19,32 @@ class _ImageGeneratorScreenState extends State<ImageGeneratorScreen> {
 
 // NOTE -> generateImage
   generateImage(var prompt) async {
-
-    var request = http.MultipartRequest('POST', Uri.parse("https://api.vyro.ai/v2/image/generations"));
-    request.headers['Authorization'] = "Bearer vk-B9fE8RCDK6VhTF25liTuFNcwHarn2il0otgj3NLCuRDL3M7";
+    controller.text = "";
+    var request = http.MultipartRequest(
+        'POST', Uri.parse("https://api.vyro.ai/v2/image/generations"));
+    request.headers['Authorization'] =
+        "Bearer vk-B9fE8RCDK6VhTF25liTuFNcwHarn2il0otgj3NLCuRDL3M7";
     request.fields["prompt"] = prompt;
     request.fields["style"] = "realistic";
     request.fields["aspect_ratio"] = "1:1";
-    request.fields["seed"]= "0";
+    request.fields["seed"] = "0";
 
     var response = await request.send();
 
-    if (response.statusCode ==200) {
+    if (response.statusCode == 200) {
       print("image generated successfully");
-      var completeResponse =  await http.Response.fromStream(response);//obtenemos el objeto con la respuesta completa de la peticion
+      var completeResponse = await http.Response.fromStream(
+          response); //obtenemos el objeto con la respuesta completa de la peticion
 
-      Directory directory = await getApplicationDocumentsDirectory();// Proporsiona una direccion de los archivos del usuario
+      Directory directory =
+          await getApplicationDocumentsDirectory(); // Proporsiona una direccion de los archivos del usuario
       genImg = File("${directory.path}/genimg.jpg");
       await genImg.writeAsBytes(completeResponse.bodyBytes);
 
       setState(() {
         genImg;
       });
-    }else{
+    } else {
       print(response.statusCode);
     }
   }
@@ -51,32 +54,60 @@ class _ImageGeneratorScreenState extends State<ImageGeneratorScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.lightGreen[300],
-        title: Text("AI image generator", style: TextStyle(color: Colors.white),),centerTitle: true,
+        title: Text(
+          "AI image generator",
+          style: TextStyle(color: Colors.white),
+        ),
+        centerTitle: true,
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-        genImg != null? Image.file(genImg):
-        Icon(Icons.ac_unit,size: 250,),
-
-        Card(
-          shape: RoundedRectangleBorder(side: BorderSide(color: Colors.black), borderRadius: BorderRadius.circular(8)),
-          child: Padding(
-            padding: const EdgeInsets.only(left:8.0, right: 8.0),
-            child: Row(
-              children: [
-                Expanded(
-                      child: TextField(
-                    controller: controller, decoration: InputDecoration(border: InputBorder.none, hintText: "Type here..."),
-                  )),
-                InkWell(child: Icon(Icons.send), onTap: (){
-                  generateImage(controller.text);
-                },)
-              ],
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
+              child: Container(
+                width: MediaQuery.of(context).size.width,
+                child: Card(
+                  shape: RoundedRectangleBorder(
+                      side: BorderSide(color: Colors.black),
+                      borderRadius: BorderRadius.circular(8)),
+                  child: genImg != null
+                      ? Image.file(genImg)
+                      : Icon(
+                          Icons.ac_unit,
+                          size: 250,
+                        ),
+                ),
+              ),
             ),
-          ),
-        )
-      ],),
+            Card(
+              shape: RoundedRectangleBorder(
+                  side: BorderSide(color: Colors.black),
+                  borderRadius: BorderRadius.circular(8)),
+              child: Padding(
+                padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                child: Row(
+                  children: [
+                    Expanded(
+                        child: TextField(
+                      controller: controller,
+                      decoration: InputDecoration(
+                          border: InputBorder.none, hintText: "Type here..."),
+                    )),
+                    InkWell(
+                      child: Icon(Icons.send),
+                      onTap: () {
+                        generateImage(controller.text);
+                      },
+                    )
+                  ],
+                ),
+              ),
+            )
+          ],
+        ),
+      ),
     );
   }
 }
