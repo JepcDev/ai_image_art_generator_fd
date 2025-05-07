@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
+import 'package:lottie/lottie.dart';
 
 class ImageGeneratorScreen extends StatefulWidget {
   const ImageGeneratorScreen({super.key});
@@ -85,9 +86,10 @@ class _ImageGeneratorScreenState extends State<ImageGeneratorScreen> {
                           width: 60,
                           height: 60,
                           child: Center(
-                              child: CircularProgressIndicator(
-                            color: Colors.teal,
-                          )))
+                            //   child: CircularProgressIndicator(
+                            // color: Colors.teal,)
+                            child: Lottie.asset('assets/atom-loader.json'),
+                          ))
                       : genImg != null
                           ? Image.file(genImg)
                           : Icon(
